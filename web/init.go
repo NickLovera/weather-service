@@ -61,7 +61,7 @@ func (ws *weatherServer) InitServer() *http.ServeMux {
 
 		path := strings.TrimPrefix(r.URL.Path, "/currentweather/")
 		parts := strings.Split(path, "/")
-		if len(parts) != 3 {
+		if len(parts) != 2 {
 			http.Error(w, "invalid path", http.StatusBadRequest)
 			return
 		}
@@ -78,13 +78,7 @@ func (ws *weatherServer) InitServer() *http.ServeMux {
 			return
 		}
 
-		isCelsius, err := strconv.ParseBool(parts[2])
-		if err != nil {
-			http.Error(w, "invalid isCelsius", http.StatusBadRequest)
-			return
-		}
-
-		resp, err := ws.weatherSvc.GetCurrentWeatherByLatLong(c, isCelsius, lat, long)
+		resp, err := ws.weatherSvc.GetCurrentWeatherByLatLong(c, lat, long)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("failed to get current weather Err: %s", err), http.StatusInternalServerError)
 			return

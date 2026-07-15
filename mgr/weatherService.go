@@ -9,7 +9,7 @@ import (
 )
 
 type IWeatherService interface {
-	GetCurrentWeatherByLatLong(c context.Context, isCelsius bool, lat, long float64) (*models.CurrentWeather, error)
+	GetCurrentWeatherByLatLong(c context.Context, lat, long float64) (*models.CurrentWeather, error)
 }
 
 type weatherService struct {
@@ -24,7 +24,7 @@ func NewWeatherService(pointsRepo repo.IPointsRepo, gridPointsRepo repo.IGridPoi
 	}
 }
 
-func (ws *weatherService) GetCurrentWeatherByLatLong(c context.Context, isCelsius bool, lat, long float64) (*models.CurrentWeather, error) {
+func (ws *weatherService) GetCurrentWeatherByLatLong(c context.Context, lat, long float64) (*models.CurrentWeather, error) {
 	//Could add some validation on the lat/long so we don't make unnecessary call
 
 	pointMetaData, err := ws.PointsRepo.GetMetaDataByLatLong(c, lat, long)
@@ -32,7 +32,7 @@ func (ws *weatherService) GetCurrentWeatherByLatLong(c context.Context, isCelsiu
 		return nil, fmt.Errorf("failed to get point metadata. Err: %s", err)
 	}
 
-	gridMetaData, err := ws.GridPointsRepo.GetHourlyForeCast(c, isCelsius, pointMetaData.Properties.GridId, pointMetaData.Properties.GridX, pointMetaData.Properties.GridY)
+	gridMetaData, err := ws.GridPointsRepo.GetHourlyForeCast(c, pointMetaData.Properties.GridId, pointMetaData.Properties.GridX, pointMetaData.Properties.GridY)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get grid point metadata. Err: %s", err)
 	}
@@ -43,11 +43,7 @@ func (ws *weatherService) GetCurrentWeatherByLatLong(c context.Context, isCelsiu
 	)
 
 	if len(gridMetaData.Properties.Periods) > 0 {
-		if isCelsius {
-			currentTemp = gridMetaData.Properties.Periods[0].Temperature.(map[string]interface{})["value"].(float64)
-		} else {
-			currentTemp = gridMetaData.Properties.Periods[0].Temperature.(float64)
-		}
+		currentTemp = extractTemperature(gridMetaData.Properties.Periods[0].Temperature)
 		currentForecast = gridMetaData.Properties.Periods[0].ShortForecast
 	}
 
@@ -55,6 +51,29 @@ func (ws *weatherService) GetCurrentWeatherByLatLong(c context.Context, isCelsiu
 		City:               pointMetaData.Properties.RelativeLocation.Properties.City,
 		State:              pointMetaData.Properties.RelativeLocation.Properties.State,
 		Forecast:           currentForecast,
-		TempCharacteristic: determineTempCharacteristic(isCelsius, currentTemp),
+		Temperature:        currentTemp,
+		TempCharacteristic: determineTempCharacteristic(currentTemp),
 	}, nil
+}
+
+func extractTemperature(value interface{}) float64 {
+	switch v := value.(type) {
+	case float64:
+		return v
+	case float32:
+		return float64(v)
+	case int:
+		return float64(v)
+	case map[string]interface{}:
+		if val, ok := v["value"].(float64); ok {
+			return val
+		}
+		if val, ok := v["value"].(float32); ok {
+			return float64(val)
+		}
+		if val, ok := v["value"].(int); ok {
+			return float64(val)
+		}
+	}
+	return 0
 }

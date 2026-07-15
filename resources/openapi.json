@@ -20,7 +20,7 @@
     }
   },
   "paths": {
-    "/currentweather/{lat}/{long}/{isCelsius}": {
+    "/currentweather/{lat}/{long}": {
       "get": {
         "summary": "Get today's weather summary",
         "parameters": [
@@ -43,15 +43,6 @@
               "format": "float"
             },
             "description": "Longitude coordinate"
-          },
-          {
-            "name": "isCelsius",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Flag to indicate if the temperature should be in Celsius (true) or Fahrenheit (false)"
           }
         ],
         "responses": {
@@ -62,17 +53,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
                     "forecast": {
                       "type": "string"
                     },
-                    "temperature": {
-                      "type": "number"
-                    },
-                    "classification": {
+                    "tempCharacteristic": {
                       "type": "string",
-                      "enum": ["hot", "cold", "moderate"]
+                      "enum": ["Hot", "Cold", "Moderate"]
                     }
                   }
+                },
+                "example": {
+                  "city": "Boyd",
+                  "state": "TX",
+                  "forecast": "Partly Cloudy",
+                  "tempCharacteristic": "Hot"
                 }
               }
             }

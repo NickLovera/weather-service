@@ -13,7 +13,7 @@ import (
 )
 
 type IGridPointsRepo interface {
-	GetHourlyForeCast(c context.Context, isCelsius bool, wfo string, x, y int) (*models.GridPointHourly, error)
+	GetHourlyForeCast(c context.Context, wfo string, x, y int) (*models.GridPointHourly, error)
 }
 
 type gridPointsRepo struct {
@@ -23,7 +23,7 @@ func NewGridPointsRepo() IGridPointsRepo {
 	return &gridPointsRepo{}
 }
 
-func (gpr *gridPointsRepo) GetHourlyForeCast(c context.Context, isCelsius bool, wfo string, x, y int) (*models.GridPointHourly, error) {
+func (gpr *gridPointsRepo) GetHourlyForeCast(c context.Context, wfo string, x, y int) (*models.GridPointHourly, error) {
 
 	hourlyUrl := fmt.Sprintf("https://api.weather.gov/gridpoints/%s/%d,%d/forecast/hourly", wfo, x, y)
 	req, err := http.NewRequest("GET", hourlyUrl, nil)
@@ -33,11 +33,6 @@ func (gpr *gridPointsRepo) GetHourlyForeCast(c context.Context, isCelsius bool, 
 
 	//Pull out user agent
 	req.Header.Set("User-Agent", contextKey.GetUserAgent(c))
-
-	//enable feature flag header for Celsius
-	if isCelsius {
-		req.Header.Set("Feature-Flags", "forecast_temperature_qv")
-	}
 
 	pointResp, err := http.DefaultClient.Do(req)
 	if err != nil {

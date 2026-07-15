@@ -24,7 +24,7 @@ The service will start on:
 The service exposes:
 
 ```text
-GET /currentweather/{lat}/{long}/{isCelsius}
+GET /currentweather/{lat}/{long}
 ```
 
 Example:
@@ -33,13 +33,13 @@ Example:
 
 ```powershell
 $headers = @{ "X-My-User-Agent" = "my-app" }
-Invoke-RestMethod -Uri "http://localhost:8080/currentweather/33.0811/-97.5631/false" -Headers $headers
+Invoke-RestMethod -Uri "http://localhost:8080/currentweather/33.0811/-97.5631" -Headers $headers
 ```
 
 ### Bash
 
 ```bash
-curl -H "X-My-User-Agent: my-app" "http://localhost:8080/currentweather/33.0811/-97.5631/false"
+curl -H "X-My-User-Agent: my-app" "http://localhost:8080/currentweather/33.0811/-97.5631"
 ```
 
 The `X-My-User-Agent` header is required for requests to this service.
@@ -66,4 +66,3 @@ http://localhost:8080/swagger-ui/
 ## Notes
 
 - `lat` and `long` should be decimal values.
-- `isCelsius` should be `true` or `false`.
