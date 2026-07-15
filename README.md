@@ -53,17 +53,14 @@ Example:
 ### PowerShell
 
 ```powershell
-$headers = @{ "X-My-User-Agent" = "my-app" }
-Invoke-RestMethod -Uri "http://localhost:8080/currentweather/33.0811/-97.5631" -Headers $headers
+Invoke-RestMethod -Uri "http://localhost:8080/currentweather/33.0811/-97.5631"
 ```
 
 ### Bash
 
 ```bash
-curl -H "X-My-User-Agent: my-app" "http://localhost:8080/currentweather/33.0811/-97.5631"
+curl "http://localhost:8080/currentweather/33.0811/-97.5631"
 ```
-
-The `X-My-User-Agent` header is required for requests to this service.
 
 ## Swagger UI
 

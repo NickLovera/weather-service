@@ -30,7 +30,7 @@ func (ws *pointsRepo) GetMetaDataByLatLong(c context.Context, lat, long float64)
 	pointUrl := fmt.Sprintf("https://api.weather.gov/points/%f,%f", lat, long)
 	req, err := http.NewRequestWithContext(c, "GET", pointUrl, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create points API request. Err: %s", err)
+		return nil, fmt.Errorf("failed to create points API request. Err: %w", err)
 	}
 
 	req.Header.Set(

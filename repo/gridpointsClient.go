@@ -40,7 +40,7 @@ func (gpr *gridPointsRepo) GetHourlyForeCast(c context.Context, wfo string, x, y
 
 	pointResp, err := gpr.client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("failed to call points API. Err: %w", err)
+		return nil, fmt.Errorf("failed to call hourly API. Err: %w", err)
 	}
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
