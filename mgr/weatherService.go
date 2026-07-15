@@ -25,7 +25,10 @@ func NewWeatherService(pointsRepo repo.IPointsRepo, gridPointsRepo repo.IGridPoi
 }
 
 func (ws *weatherService) GetCurrentWeatherByLatLong(c context.Context, lat, long float64) (*models.CurrentWeather, error) {
-	//Could add some validation on the lat/long so we don't make unnecessary call
+
+	if lat < -90 || lat > 90 || long < -180 || long > 180 {
+		return nil, fmt.Errorf("invalid latitude or longitude values. Latitude must be between -90 and 90, and longitude must be between -180 and 180")
+	}
 
 	pointMetaData, err := ws.PointsRepo.GetMetaDataByLatLong(c, lat, long)
 	if err != nil {
