@@ -33,6 +33,11 @@ func (ws *pointsRepo) GetMetaDataByLatLong(c context.Context, lat, long float64)
 		return nil, fmt.Errorf("failed to create points API request. Err: %s", err)
 	}
 
+	req.Header.Set(
+		"User-Agent",
+		"weather-service/1.0 (github.com/NickLovera/weather-service)",
+	)
+
 	pointResp, err := ws.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to call points API. Err: %w", err)

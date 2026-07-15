@@ -27,6 +27,27 @@ The service exposes:
 GET /currentweather/{lat}/{long}
 ```
 
+### Hourly forecast interpretation
+
+The service calls the National Weather Service hourly forecast API and uses the first forecast period in the response as the current weather snapshot. It maps that period to the response payload as follows:
+
+- `forecast` uses the first period's `shortForecast` value.
+- `tempCharacteristic` is derived from the first period's `temperature` value in Fahrenheit:
+  - `Hot` when the temperature is greater than 75°F
+  - `Cold` when the temperature is less than 50°F
+  - `Moderate` for all other temperatures (50°F to 75°F inclusive)
+
+Example response:
+
+```json
+{
+  "city": "Dallas",
+  "state": "TX",
+  "forecast": "Partly Cloudy",
+  "tempCharacteristic": "Moderate"
+}
+```
+
 Example:
 
 ### PowerShell

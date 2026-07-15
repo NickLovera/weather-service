@@ -51,11 +51,6 @@ func (ws *weatherServer) InitServer() *http.ServeMux {
 			return
 		}
 
-		if r.Header.Get("X-My-User-Agent") == "" {
-			http.Error(w, "X-My-User-Agent header is required", http.StatusBadRequest)
-			return
-		}
-
 		path := strings.TrimPrefix(r.URL.Path, "/currentweather/")
 		parts := strings.Split(path, "/")
 		if len(parts) != 2 {

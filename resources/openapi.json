@@ -5,19 +5,9 @@
     "version": "1.0.0",
     "description": "A basic API for retrieving weather forecast information."
   },
-  "security": [
-    {
-      "userAgent": []
-    }
-  ],
+  "security": [],
   "components": {
-    "securitySchemes": {
-      "userAgent": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "X-My-User-Agent"
-      }
-    }
+    "securitySchemes": {  }
   },
   "paths": {
     "/currentweather/{lat}/{long}": {

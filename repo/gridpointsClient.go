@@ -33,6 +33,11 @@ func (gpr *gridPointsRepo) GetHourlyForeCast(c context.Context, wfo string, x, y
 		return nil, fmt.Errorf("failed to create hourly API request. Err: %s", err)
 	}
 
+	req.Header.Set(
+		"User-Agent",
+		"weather-service/1.0 (github.com/NickLovera/weather-service)",
+	)
+
 	pointResp, err := gpr.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to call points API. Err: %w", err)
