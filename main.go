@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/NickLovera/weather-service/mgr"
 	"github.com/NickLovera/weather-service/repo"
@@ -11,8 +12,12 @@ import (
 
 func main() {
 
-	pointRepo := repo.NewPointsRepo()
-	gridPointRepo := repo.NewGridPointsRepo()
+	httpClient := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	pointRepo := repo.NewPointsRepo(httpClient)
+	gridPointRepo := repo.NewGridPointsRepo(httpClient)
 
 	weatherSvc := mgr.NewWeatherService(pointRepo, gridPointRepo)
 

@@ -16,10 +16,13 @@ type IGridPointsRepo interface {
 }
 
 type gridPointsRepo struct {
+	client *http.Client
 }
 
-func NewGridPointsRepo() IGridPointsRepo {
-	return &gridPointsRepo{}
+func NewGridPointsRepo(client *http.Client) IGridPointsRepo {
+	return &gridPointsRepo{
+		client: client,
+	}
 }
 
 func (gpr *gridPointsRepo) GetHourlyForeCast(c context.Context, wfo string, x, y int) (*models.GridPointHourly, error) {
@@ -30,7 +33,7 @@ func (gpr *gridPointsRepo) GetHourlyForeCast(c context.Context, wfo string, x, y
 		return nil, fmt.Errorf("failed to create hourly API request. Err: %s", err)
 	}
 
-	pointResp, err := http.DefaultClient.Do(req)
+	pointResp, err := gpr.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to call points API. Err: %w", err)
 	}

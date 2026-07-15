@@ -15,10 +15,14 @@ type IPointsRepo interface {
 	GetMetaDataByLatLong(c context.Context, lat, long float64) (*models.PointMetaData, error)
 }
 
-type pointsRepo struct{}
+type pointsRepo struct {
+	client *http.Client
+}
 
-func NewPointsRepo() IPointsRepo {
-	return &pointsRepo{}
+func NewPointsRepo(client *http.Client) IPointsRepo {
+	return &pointsRepo{
+		client: client,
+	}
 }
 
 func (ws *pointsRepo) GetMetaDataByLatLong(c context.Context, lat, long float64) (*models.PointMetaData, error) {
@@ -29,7 +33,7 @@ func (ws *pointsRepo) GetMetaDataByLatLong(c context.Context, lat, long float64)
 		return nil, fmt.Errorf("failed to create points API request. Err: %s", err)
 	}
 
-	pointResp, err := http.DefaultClient.Do(req)
+	pointResp, err := ws.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to call points API. Err: %w", err)
 	}
