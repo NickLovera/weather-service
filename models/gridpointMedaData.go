@@ -9,6 +9,6 @@ type GridPointProperties struct {
 }
 
 type Periods struct {
-	Temperature   interface{} `json:"temperature"`
-	ShortForecast string      `json:"shortForecast"`
+	Temperature   float64 `json:"temperature"`
+	ShortForecast string  `json:"shortForecast"`
 }

@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/NickLovera/weather-service/contextKey"
 	"github.com/NickLovera/weather-service/models"
 )
 
@@ -25,13 +24,10 @@ func NewPointsRepo() IPointsRepo {
 func (ws *pointsRepo) GetMetaDataByLatLong(c context.Context, lat, long float64) (*models.PointMetaData, error) {
 
 	pointUrl := fmt.Sprintf("https://api.weather.gov/points/%f,%f", lat, long)
-	req, err := http.NewRequest("GET", pointUrl, nil)
+	req, err := http.NewRequestWithContext(c, "GET", pointUrl, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create points API request. Err: %s", err)
 	}
-
-	//Pull out user agent
-	req.Header.Set("User-Agent", contextKey.GetUserAgent(c))
 
 	pointResp, err := http.DefaultClient.Do(req)
 	if err != nil {

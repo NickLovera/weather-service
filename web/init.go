@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/NickLovera/weather-service/contextKey"
 	"github.com/NickLovera/weather-service/mgr"
 )
 
@@ -57,8 +56,6 @@ func (ws *weatherServer) InitServer() *http.ServeMux {
 			return
 		}
 
-		c := contextKey.EmbedUserAgent(r.Context(), r.Header.Get("X-My-User-Agent"))
-
 		path := strings.TrimPrefix(r.URL.Path, "/currentweather/")
 		parts := strings.Split(path, "/")
 		if len(parts) != 2 {
@@ -78,7 +75,7 @@ func (ws *weatherServer) InitServer() *http.ServeMux {
 			return
 		}
 
-		resp, err := ws.weatherSvc.GetCurrentWeatherByLatLong(c, lat, long)
+		resp, err := ws.weatherSvc.GetCurrentWeatherByLatLong(r.Context(), lat, long)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("failed to get current weather Err: %s", err), http.StatusInternalServerError)
 			return

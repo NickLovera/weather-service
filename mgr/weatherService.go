@@ -41,42 +41,21 @@ func (ws *weatherService) GetCurrentWeatherByLatLong(c context.Context, lat, lon
 	}
 
 	var (
-		currentForecast = "No forecast data available" //Set defaults here, could error if no periods are given instead
+		currentForecast string
 		currentTemp     float64
 	)
 
 	if len(gridMetaData.Properties.Periods) > 0 {
-		currentTemp = extractTemperature(gridMetaData.Properties.Periods[0].Temperature)
+		currentTemp = gridMetaData.Properties.Periods[0].Temperature
 		currentForecast = gridMetaData.Properties.Periods[0].ShortForecast
+	} else {
+		return nil, fmt.Errorf("no forecast periods available for the given location")
 	}
 
 	return &models.CurrentWeather{
 		City:               pointMetaData.Properties.RelativeLocation.Properties.City,
 		State:              pointMetaData.Properties.RelativeLocation.Properties.State,
 		Forecast:           currentForecast,
-		Temperature:        currentTemp,
 		TempCharacteristic: determineTempCharacteristic(currentTemp),
 	}, nil
-}
-
-func extractTemperature(value interface{}) float64 {
-	switch v := value.(type) {
-	case float64:
-		return v
-	case float32:
-		return float64(v)
-	case int:
-		return float64(v)
-	case map[string]interface{}:
-		if val, ok := v["value"].(float64); ok {
-			return val
-		}
-		if val, ok := v["value"].(float32); ok {
-			return float64(val)
-		}
-		if val, ok := v["value"].(int); ok {
-			return float64(val)
-		}
-	}
-	return 0
 }

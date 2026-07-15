@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/NickLovera/weather-service/contextKey"
 	"github.com/NickLovera/weather-service/models"
 )
 
@@ -26,13 +25,10 @@ func NewGridPointsRepo() IGridPointsRepo {
 func (gpr *gridPointsRepo) GetHourlyForeCast(c context.Context, wfo string, x, y int) (*models.GridPointHourly, error) {
 
 	hourlyUrl := fmt.Sprintf("https://api.weather.gov/gridpoints/%s/%d,%d/forecast/hourly", wfo, x, y)
-	req, err := http.NewRequest("GET", hourlyUrl, nil)
+	req, err := http.NewRequestWithContext(c, "GET", hourlyUrl, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create hourly API request. Err: %s", err)
 	}
-
-	//Pull out user agent
-	req.Header.Set("User-Agent", contextKey.GetUserAgent(c))
 
 	pointResp, err := http.DefaultClient.Do(req)
 	if err != nil {
