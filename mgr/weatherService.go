@@ -29,12 +29,12 @@ func (ws *weatherService) GetCurrentWeatherByLatLong(c context.Context, lat, lon
 
 	pointMetaData, err := ws.PointsRepo.GetMetaDataByLatLong(c, lat, long)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get point metadata. Err: %s", err)
+		return nil, fmt.Errorf("failed to get point metadata. Err: %w", err)
 	}
 
 	gridMetaData, err := ws.GridPointsRepo.GetHourlyForeCast(c, pointMetaData.Properties.GridId, pointMetaData.Properties.GridX, pointMetaData.Properties.GridY)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get grid point metadata. Err: %s", err)
+		return nil, fmt.Errorf("failed to get grid point metadata. Err: %w", err)
 	}
 
 	var (

@@ -35,7 +35,7 @@ func (ws *pointsRepo) GetMetaDataByLatLong(c context.Context, lat, long float64)
 
 	pointResp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("failed to call points API. Err: %s", err)
+		return nil, fmt.Errorf("failed to call points API. Err: %w", err)
 	}
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
@@ -45,9 +45,18 @@ func (ws *pointsRepo) GetMetaDataByLatLong(c context.Context, lat, long float64)
 		}
 	}(pointResp.Body)
 
+	body, err := io.ReadAll(pointResp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read points API response body. Err: %w", err)
+	}
+
+	if pointResp.StatusCode < http.StatusOK || pointResp.StatusCode >= http.StatusMultipleChoices {
+		return nil, fmt.Errorf("NWS points API returned status %d: %s", pointResp.StatusCode, string(body))
+	}
+
 	var pointMetaData models.PointMetaData
-	if err := json.NewDecoder(pointResp.Body).Decode(&pointMetaData); err != nil {
-		return nil, fmt.Errorf("failed to decode points API response. Err: %s", err)
+	if err := json.Unmarshal(body, &pointMetaData); err != nil {
+		return nil, fmt.Errorf("failed to decode points API response. Err: %w", err)
 	}
 
 	return &pointMetaData, nil
