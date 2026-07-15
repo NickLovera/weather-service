@@ -1,0 +1,84 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Weather Service API",
+    "version": "1.0.0",
+    "description": "A basic API for retrieving weather forecast information."
+  },
+  "security": [
+    {
+      "userAgent": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "userAgent": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-My-User-Agent"
+      }
+    }
+  },
+  "paths": {
+    "/currentweather/{lat}/{long}/{isCelsius}": {
+      "get": {
+        "summary": "Get today's weather summary",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "float"
+            },
+            "description": "Latitude coordinate"
+          },
+          {
+            "name": "long",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "float"
+            },
+            "description": "Longitude coordinate"
+          },
+          {
+            "name": "isCelsius",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Flag to indicate if the temperature should be in Celsius (true) or Fahrenheit (false)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Weather information for the supplied coordinates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "forecast": {
+                      "type": "string"
+                    },
+                    "temperature": {
+                      "type": "number"
+                    },
+                    "classification": {
+                      "type": "string",
+                      "enum": ["hot", "cold", "moderate"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
